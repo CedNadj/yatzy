@@ -10,7 +10,8 @@ export class Dice {
     roll() {
         // If each dies isn't held, it will give a random number 1-6
         this.values = this.values.map((v, i) => 
-            this.held[i] ? v : Math.floor(Math.random() * 6) + 1);
+            this.held[i] ? v : Math.floor(Math.random() * 6) + 1
+        );
         return this.values;
     }
     // When a player clicks a die, it flip its held status

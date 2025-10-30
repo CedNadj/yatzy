@@ -1,6 +1,6 @@
 // Central game manager that connexts UI, dice, and engine
 
-import {Dice} from './Dice.js';
+import { Dice } from './Dice.js';
 import { YatzyEngine } from './YatzyEngine.js';
 
 export class YatzyGame {

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Yatzy Game - Lab 06</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="container">
+    <h1>🎲 Yatzy Dice Game</h1>
+    <p class="lead">Click "Roll" to roll the dice. You can click a die to hold it, and "End Turn" to reset.</p>
+
+    <div class="game">
+      <div class="dice-row" id="diceRow"></div>
+
+      <div class="controls">
+        <button id="rollBtn" class="btn">Roll</button>
+        <button id="resetTurn" class="btn end">End Turn</button>
+        <div class="status">
+          Rolls used: <span id="rollCount">0</span>/3 —
+          Rolls left: <span id="rollLeft">3</span>
+        </div>
+        <div>Last roll: <span id="lastRollText">—</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ✅ Link to the YatzyGame module -->
+  <script type="module" src="./modules/YatzyGame.js"></script>
+</body>
+</html>

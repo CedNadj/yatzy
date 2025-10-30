@@ -22,11 +22,34 @@ body {
   padding:28px;
   min-height:100vh;
 }
-.container { width:100%; max-width:1000px; }
-header { display:flex; justify-content:space-between; margin-bottom:18px; }
-h1 { margin:0; font-size:1.4rem; }
-p.lead { margin:6px 0 0; font-size:0.95rem; color:var(--muted); }
-.game { display:grid; grid-template-columns:1fr 320px; gap:18px; }
+.container { 
+  width:100%; 
+  max-width:1000px; 
+}
+
+header { 
+  display:flex; 
+  justify-content:space-between; 
+  margin-bottom:18px; 
+}
+
+h1 { 
+  margin:0; 
+  font-size:1.4rem; 
+}
+
+p.lead { 
+  margin:6px 0 0; 
+  font-size:0.95rem; 
+  color:var(--muted); 
+}
+
+.game { 
+  display:grid; 
+  grid-template-columns:1fr 320px; 
+  gap:18px; 
+}
+
 .board, .card {
   background:var(--card);
   padding:16px;
@@ -46,6 +69,16 @@ p.lead { margin:6px 0 0; font-size:0.95rem; color:var(--muted); }
   border-radius: 12px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.1);
   position: relative;
+  transition: transform 0.15s;
+  cursor: pointer;
+}
+
+.die:hover{
+  transform: translateY(-4px);
+}
+
+.die.held{
+  background: #ffd166;
 }
 
 .pip {
@@ -56,7 +89,7 @@ p.lead { margin:6px 0 0; font-size:0.95rem; color:var(--muted); }
   position: absolute;
 }
 
-/* Positions */
+/* Pip Positions */
 .top-left { top: 12px; left: 12px; }
 .top-right { top: 12px; right: 12px; }
 .middle-left { top: 50%; left: 12px; transform: translateY(-50%); }
@@ -65,13 +98,30 @@ p.lead { margin:6px 0 0; font-size:0.95rem; color:var(--muted); }
 .bottom-right { bottom: 12px; right: 12px; }
 .center { top: 50%; left: 50%; transform: translate(-50%, -50%); }
 
-.controls { display:flex; gap:10px; margin-bottom:12px; }
-button.btn {
-  padding:10px 16px; border-radius:8px; border:0;
-  background:var(--primary); color:white; font-weight:600;
+.controls { 
+  display:flex; 
+  gap:10px; 
+  margin-bottom:12px; 
 }
-button.btn:disabled { opacity:.5; cursor:not-allowed; }
-.info { font-size:0.95rem; color:var(--muted); }
+
+button.btn {
+  padding:10px 16px; 
+  border-radius:8px; 
+  border:0;
+  background:var(--primary); 
+  color:white; 
+  font-weight:600;
+  cursor: pointer;
+}
+button.btn:disabled { 
+  opacity:.5; 
+  cursor:not-allowed; 
+}
+
+.info { 
+  font-size:0.95rem; 
+  color:var(--muted); 
+}
 
 table.scorecard { width:100%; border-collapse:collapse; }
 .scorecard td, .scorecard th { padding:8px 6px; border-bottom:1px solid #eef2f7; }
