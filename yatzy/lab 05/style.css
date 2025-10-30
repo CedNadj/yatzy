@@ -104,6 +104,12 @@ p.lead {
   margin-bottom:12px; 
 }
 
+.card strong{
+  display: block;
+  margin-bottom: 8px;
+  font-size: 1.1rem;
+}
+
 button.btn {
   padding:10px 16px; 
   border-radius:8px; 
@@ -124,7 +130,7 @@ button.btn:disabled {
 }
 
 table.scorecard { width:100%; border-collapse:collapse; }
-.scorecard td, .scorecard th { padding:8px 6px; border-bottom:1px solid #eef2f7; }
+.scorecard td, .scorecard th { text-align: left; padding:8px 6px; border-bottom:1px solid #eef2f7; }
 .scorecard th { font-size:0.88rem; color:var(--muted); }
 .score-cell { text-align:right; font-weight:700; cursor:pointer; }
 .score-cell.filled { color:var(--muted); cursor:default; }
