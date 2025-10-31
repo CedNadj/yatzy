@@ -1,5 +1,5 @@
 // modules/Dice.js
-// Handles dice logic
+// Dice module — encapsulates dice values and holds
 
 export class Dice {
   constructor(numberOfDice = 5) {
@@ -8,6 +8,7 @@ export class Dice {
     this.held = new Array(numberOfDice).fill(false);
   }
 
+  // roll unheld dice
   roll() {
     this.values = this.values.map((v, i) =>
       this.held[i] ? v : Math.floor(Math.random() * 6) + 1
@@ -16,6 +17,7 @@ export class Dice {
   }
 
   toggleHold(index) {
+    if (index < 0 || index >= this.numberOfDice) return;
     this.held[index] = !this.held[index];
   }
 
@@ -25,6 +27,6 @@ export class Dice {
   }
 
   getValues() {
-    return this.values;
+    return this.values.slice();
   }
 }
