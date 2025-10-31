@@ -1,3 +1,4 @@
+// modules/YatzyEngine.js
 // Implements scoring rules for Yatzy categories
 // The scoring decisions used here:
 // - Ones..Sixes: sum of those faces
@@ -9,6 +10,7 @@
 // - Full House: sum of all dice when counts are [3,2]
 // - Chance: sum of all dice
 // - Yatzy: 50 when all five equal
+//
 // Upper-section bonus (if ones..sixes sum >= 63) -> +50
 
 export class YatzyEngine {

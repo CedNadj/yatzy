@@ -1,3 +1,4 @@
+// modules/Dice.js
 // Dice module — encapsulates dice values and holds
 
 export class Dice {

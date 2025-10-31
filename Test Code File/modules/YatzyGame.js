@@ -1,3 +1,4 @@
+// modules/YatzyGame.js
 // Main game controller — imports Dice and Engine, handles UI, turns and scoring.
 
 import { Dice } from './Dice.js';
@@ -211,7 +212,7 @@ class YatzyGame {
 
 // Initialize game after DOM content loaded
 window.addEventListener('DOMContentLoaded', () => {
-  // Confirms DOM elements exist
+  // Guard: confirm DOM elements exist
   if (!document.getElementById('diceRow')) {
     console.error('Missing required HTML elements. Ensure index.html matches the provided template.');
     return;
