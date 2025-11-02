@@ -4,10 +4,14 @@ import path from "path";
 import { fileURLToPath } from "url";
 
 // Node path setup
+// filename -> the full path to the current file
+// dirname -> the folder path containing the current file
+// Because we swtich to ES modules (by adding "type": "module" in package.json; those global variables disappear)
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
+const express = require('express');
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3000;
 
 // Serve static files from /public folder
 app.use(express.static(path.join(dirname, "public")));
