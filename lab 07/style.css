@@ -1,0 +1,72 @@
+:root{
+  --primary:#1E7BEA;
+  --accent:#FFD166;
+  --bg:#F3F6FB;
+  --card:#ffffff;
+  --text:#0F1724;
+  --muted:#6B7280;
+  
+}
+
+*{
+  box-sizing:border-box;
+  font-family:Inter, Roboto, system-ui, sans-serif
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  padding:22px;
+  display:flex;
+  justify-content:center
+}
+
+.app{
+  width:1000px;
+  max-width:100%;
+}
+
+header h1{
+  margin:0;
+  font-size:1.4rem}
+.lead{color:var(--muted);margin-top:6px}
+
+main{
+  display:flex;
+  gap:18px;
+  margin-top:18px}
+.left{flex:1}
+.right{width:360px}
+
+.panel{background:var(--card);padding:14px;border-radius:12px;box-shadow:0 6px 18px rgba(12,24,48,0.06)}
+.dice-row{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;padding:10px}
+.die{width:82px;height:82px;background:white;border-radius:12px;box-shadow:0 4px 8px rgba(15,23,36,0.06);position:relative;cursor:pointer;display:inline-block;transition:transform .12s}
+.die:hover{transform:translateY(-6px)}
+.die.held{background:var(--accent);transform:translateY(-6px) scale(0.98)}
+
+.pip{width:14px;height:14px;border-radius:50%;background:var(--text);position:absolute}
+.top-left{top:12px;left:12px}
+.top-right{top:12px;right:12px}
+.middle-left{top:50%;left:12px;transform:translateY(-50%)}
+.middle-right{top:50%;right:12px;transform:translateY(-50%)}
+.bottom-left{bottom:12px;left:12px}
+.bottom-right{bottom:12px;right:12px}
+.center{top:50%;left:50%;transform:translate(-50%,-50%)}
+
+.controls{margin-top:12px;display:flex;flex-direction:column;gap:10px}
+.buttons{display:flex;gap:8px;align-items:center}
+.btn{padding:10px 14px;border-radius:8px;border:0;background:var(--muted);color:white;cursor:pointer;font-weight:700}
+.btn.primary{background:var(--primary)}
+.btn.secondary{background:#9CA3AF}
+
+.status{color:var(--muted);font-size:.95rem;margin-top:6px}
+.message{margin-top:8px;color:#0F1724;font-weight:600}
+
+.scorecard{width:100%;border-collapse:collapse;margin-top:8px}
+.scorecard td, .scorecard th{padding:8px;border-bottom:1px solid #eef2f7}
+.score-card th{color:var(--muted)}
+.score-cell{cursor:pointer;text-align:right;font-weight:800}
+.score-cell.filled{opacity:.65;color:var(--muted);cursor:default}
+tfoot td{font-weight:800}
+.divider td{background:transparent;border:none;height:8px}
