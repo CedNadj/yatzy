@@ -9,7 +9,7 @@ import { fileURLToPath } from "url";
 // Because we swtich to ES modules (by adding "type": "module" in package.json; those global variables disappear)
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
-const express = require('express');
+
 const app = express();
 const PORT = 3000;
 
