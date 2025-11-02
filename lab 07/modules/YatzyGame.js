@@ -1,6 +1,6 @@
 // Main game controller — imports Dice and Engine, handles UI, turns and scoring.
 
-import { Dice } from './Dice.js';
+import { Dice } from './dice.js';
 import { YatzyEngine } from './YatzyEngine.js';
 
 class YatzyGame {
