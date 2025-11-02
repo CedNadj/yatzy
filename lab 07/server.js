@@ -2,6 +2,7 @@
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
+import { createGame, rollDice, scoreCategory, getState } from "./server/gameState.js";
 
 // Node path setup
 // filename -> the full path to the current file
@@ -14,15 +15,16 @@ const app = express();
 const PORT = 3000;
 
 // Serve static files from /public folder
+app.use(express.json());
 app.use(express.static(path.join(dirname, "public")));
 
-// Returns 5 random dice values
-app.get("/roll-dices", (requ, res) => {
-    const diceValues = Array.from({ length: 5}, () => Math.floor(Math.random() * 6) + 1);
-    res.json({ dice: diceValues });
-});
+// ---- API Endpoints ----
+app.post("/api/game", (req, res) => res.json(createGame()));          // new game
+app.post("/api/roll", (req, res) => res.json(rollDice()));            // roll dice
+app.post("/api/score/:category", (req, res) =>                        // score category
+    res.json(scoreCategory(req.params.category)));
+app.get("/api/state", (req, res) => res.json(getState()));            // current state
 
-// Start server
-app.listen(PORT, () => {
-    console.log(`Yatzy server running at http://localhost:${PORT}`);
-});
+app.listen(PORT, () =>
+  console.log(`✅ Yatzy server running at http://localhost:${PORT}`)
+);
