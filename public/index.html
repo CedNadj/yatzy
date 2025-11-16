@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yatzy — Enhanced Server-Side Game</title>
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>🎲 Yatzy — Enhanced Edition</h1>
+      <p class="lead">Server-side game with jQuery animations. Roll dice, hold, and score categories to win!</p>
+      <div class="game-info">
+        <span class="turn-info">Turn: <span id="turnCount">1</span></span>
+        <span class="score-info">Total: <span id="totalScore">0</span></span>
+      </div>
+    </header>
+
+    <main>
+      <section class="left">
+        <!-- Dice Panel -->
+        <div class="panel dice-panel">
+          <h2>Dice</h2>
+          <div class="dice-container">
+            <div class="dice-row" id="diceRow" aria-live="polite">
+              <!-- Dice will be dynamically inserted here -->
+            </div>
+          </div>
+          <div class="dice-instructions">
+            <p>Click on dice to hold them between rolls</p>
+          </div>
+        </div>
+
+        <!-- Controls Panel -->
+        <div class="panel controls">
+          <h2>Game Controls</h2>
+          <div class="buttons">
+            <button id="rollBtn" class="btn primary">🎲 Roll Dice (<span id="rollsLeft">3</span> left)</button>
+            <button id="scoreBtn" class="btn secondary">📝 Score Category</button>
+            <button id="resetBtn" class="btn warning">🔄 New Turn</button>
+            <button id="newGameBtn" class="btn danger">🆕 New Game</button>
+          </div>
+
+          <div class="status-panel">
+            <div class="status-item">
+              <label>Rolls Used:</label>
+              <span id="rollCount">0</span>/<span id="maxRolls">3</span>
+            </div>
+            <div class="status-item">
+              <label>Current Roll:</label>
+              <span id="lastRoll">—</span>
+            </div>
+            <div class="status-item">
+              <label>Held Dice:</label>
+              <span id="heldCount">0</span>/5
+            </div>
+            <div id="message" class="message" aria-live="polite">
+              Welcome to Yatzy! Click "Roll Dice" to start.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <!-- Scorecard Panel -->
+        <div class="panel score-panel">
+          <h2>Scorecard</h2>
+          <div class="scorecard-container">
+            <table class="scorecard" id="scorecard">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Score</th>
+                  <th>Potential</th>
+                </tr>
+              </thead>
+              <tbody>
+                <!-- Upper Section -->
+                <tr class="section-header">
+                  <td colspan="3">Upper Section</td>
+                </tr>
+                <tr><td>Ones</td><td class="score-cell filled" data-key="ones">—</td><td class="potential-cell" data-key="ones">—</td></tr>
+                <tr><td>Twos</td><td class="score-cell" data-key="twos">—</td><td class="potential-cell" data-key="twos">—</td></tr>
+                <tr><td>Threes</td><td class="score-cell" data-key="threes">—</td><td class="potential-cell" data-key="threes">—</td></tr>
+                <tr><td>Fours</td><td class="score-cell" data-key="fours">—</td><td class="potential-cell" data-key="fours">—</td></tr>
+                <tr><td>Fives</td><td class="score-cell" data-key="fives">—</td><td class="potential-cell" data-key="fives">—</td></tr>
+                <tr><td>Sixes</td><td class="score-cell" data-key="sixes">—</td><td class="potential-cell" data-key="sixes">—</td></tr>
+                
+                <tr class="subtotal">
+                  <td>Upper Total</td>
+                  <td id="upperTotal">0</td>
+                  <td></td>
+                </tr>
+                <tr class="bonus">
+                  <td>Bonus (63+)</td>
+                  <td id="upperBonus">0</td>
+                  <td></td>
+                </tr>
+
+                <!-- Lower Section -->
+                <tr class="section-header">
+                  <td colspan="3">Lower Section</td>
+                </tr>
+                <tr><td>One Pair</td><td class="score-cell" data-key="onePair">—</td><td class="potential-cell" data-key="onePair">—</td></tr>
+                <tr><td>Two Pairs</td><td class="score-cell" data-key="twoPairs">—</td><td class="potential-cell" data-key="twoPairs">—</td></tr>
+                <tr><td>Three of a Kind</td><td class="score-cell" data-key="threeKind">—</td><td class="potential-cell" data-key="threeKind">—</td></tr>
+                <tr><td>Four of a Kind</td><td class="score-cell" data-key="fourKind">—</td><td class="potential-cell" data-key="fourKind">—</td></tr>
+                <tr><td>Small Straight</td><td class="score-cell" data-key="smallStraight">—</td><td class="potential-cell" data-key="smallStraight">—</td></tr>
+                <tr><td>Large Straight</td><td class="score-cell" data-key="largeStraight">—</td><td class="potential-cell" data-key="largeStraight">—</td></tr>
+                <tr><td>Full House</td><td class="score-cell" data-key="fullHouse">—</td><td class="potential-cell" data-key="fullHouse">—</td></tr>
+                <tr><td>Chance</td><td class="score-cell" data-key="chance">—</td><td class="potential-cell" data-key="chance">—</td></tr>
+                <tr><td>Yatzy</td><td class="score-cell" data-key="yatzy">—</td><td class="potential-cell" data-key="yatzy">—</td></tr>
+              </tbody>
+              <tfoot>
+                <tr class="total">
+                  <td><strong>Grand Total</strong></td>
+                  <td id="grandTotal" colspan="2">0</td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+          
+          <div class="scorecard-legend">
+            <div class="legend-item">
+              <span class="legend-color filled"></span>
+              <span>Filled Category</span>
+            </div>
+            <div class="legend-item">
+              <span class="legend-color potential"></span>
+              <span>Potential Score</span>
+            </div>
+          </div>
+        </div>
+      </aside>
+    </main>
+
+    <footer>
+      <div class="footer-info">
+        <p>Yatzy Game - Assignment 2 | Server-Side Architecture with Node.js & Express</p>
+        <p class="tech-stack">Tech: HTML5, CSS3, JavaScript (ES6+), jQuery, Node.js, Express.js, Fetch API</p>
+      </div>
+    </footer>
+  </div>
+
+  <!-- Game initialization -->
+  <script type="module" src="./modules/YatzyGame.js"></script>
+</body>
+</html>

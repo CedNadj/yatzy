@@ -1,42 +1,80 @@
-# yatzy - Single-player
+# 🎲 Yatzy Game - Assignment 2
 
-## Overview
-This is a single-player Yatzy game built with plain HTML, CSS and JavaScript.
-The project demonstrates an interactive UI including rolling dice (with animation), holding dice, and a scorecard that accepts scores for the different Yatzy categories.
+## Enhanced Server-Side Yatzy Game with Node.js and Express
 
-## Rules (summary)
-- A player rolls **five dice**
-- A player may roll up to **3 times** per turn (initial roll +  up to 2 rerolls).
-- After each roll, the player may **hold** any subset of dice then reroll the rest.
-- Each turn the player must place a score (or 0) into one category on the scorecard.
-- The game ends when every score category has been used.
-- The player with the highest total (sum of scoreard + bonuses) wins.
+A full-stack Yatzy game implementation featuring server-side game state management, client-server communication via Fetch API, and enhanced jQuery animations.
 
-**Scoring - lower section used here (Yatzy rules simplified):**
-- One Pair: sum of the pair (two same dice).
-- Two Pairs: sum of both pairs.
-- Three of a Kind: sum of the three dice.
-- Four of a Kind: sum of the four dice.
-- Samll Straight (1-2-3-4-5): socre 15 (sum).
-- Large Straight (2-3-4-5-6): socre 20 (sum).
-- Full House (3 + 2): sum of all dice.
-- Chance: sum of all dice.
-- Yatzy (all five equal): 50.
+### 🚀 Features
 
-Upper section (Ones -> Sixes) are scored as count x face vaue. A 63+ bonus (if implemented) can be added later.
+- **Full Server-Side Architecture**: Game state managed entirely on the server
+- **RESTful API**: Complete set of endpoints for all game operations
+- **jQuery Animations**: Smooth dice rolling animations and UI interactions
+- **Responsive Design**: Works on desktop, tablet, and mobile devices
+- **Real-time Updates**: Live score calculations and game state synchronization
+- **Error Handling**: Comprehensive client and server error handling
 
-## How to run
-1. Clone this repository to your local machine.
-2. Open `index.html` in a browser
-3. Click **Roll** to roll dice.
-4. Click dice to toogle "hold".
-5. Click a score cell to fill it with the computed score for the current dice.
-6. The UI is responsive and works on desktop & mobile.
+### 🛠 Tech Stack
 
-## Files
-- `DESIGN.md` - overview info about how the game was designed
-- `Index.htlm` - main UI
-- `Style.css` - main design UI
-- `Dice.js` - knows how to roll dice and which dice are held
-- `YatzyEngine.js` - calculates scores for a given category and dice values
-- `YatzyGame.js` - connects the two to the page: controlling turns, animation, and the UI.
+**Frontend:**
+- HTML5, CSS3 with CSS Grid and Flexbox
+- JavaScript (ES6+ modules)
+- jQuery 3.7.1 for animations and DOM manipulation
+- Fetch API for server communication
+
+**Backend:**
+- Node.js with Express.js
+- RESTful API architecture
+- ES6 modules
+
+### 📁 Project Structure
+yatzy-assignment2/
+├── public/
+│ ├── index.html # Main game interface
+│ ├── style.css # Complete styling
+│ └── modules/
+│ └── YatzyGame.js # Client-side game logic
+├── server/
+│ └── gameState.js # Server-side game state management
+├── server.js # Express server setup
+├── package.json # Project dependencies
+└── README.md # This file
+
+
+### 🎯 API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/api/game` | Create new game |
+| GET | `/api/game` | Get current game state |
+| POST | `/api/roll` | Roll dice |
+| POST | `/api/hold/:index` | Toggle dice hold state |
+| POST | `/api/hold/reset` | Reset all hold states |
+| POST | `/api/score/:category` | Score a category |
+| GET | `/api/score/calculate/:category` | Calculate potential score |
+| GET | `/api/state` | Get complete game state |
+| GET | `/api/score/total` | Get total score |
+
+### 🎮 Game Rules
+
+**Upper Section:** Ones, Twos, Threes, Fours, Fives, Sixes
+- Score sum of dice showing the number
+
+**Lower Section:**
+- **One Pair**: Sum of highest pair
+- **Two Pairs**: Sum of two distinct pairs
+- **Three of a Kind**: Sum of three matching dice
+- **Four of a Kind**: Sum of four matching dice
+- **Small Straight**: 1-2-3-4-5 (15 points)
+- **Large Straight**: 2-3-4-5-6 (20 points)
+- **Full House**: Three of a kind + pair (sum of all dice)
+- **Chance**: Sum of all dice
+- **Yatzy**: All five dice same (50 points)
+
+**Bonus:** 50 points if upper section sum ≥ 63
+
+### 🚀 Installation & Setup
+
+1. **Clone or download the project**
+   ```bash
+   git clone <repository-url>
+   cd yatzy-assignment2
