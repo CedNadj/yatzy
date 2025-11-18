@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Yatzy — Full Game</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>Yatzy — Single Player</h1>
+      <p class="lead">Roll up to 3 times, hold dice, then choose a category to score. Try to get the highest total!</p>
+    </header>
+
+    <main>
+      <section class="left">
+        <div class="panel dice-panel">
+          <div class="dice-row" id="diceRow" aria-live="polite"></div>
+        </div>
+
+        <div class="panel controls">
+          <div class="buttons">
+            <button id="rollBtn" class="btn primary">Roll</button>
+            <button id="resetBtn" class="btn secondary">End Turn (forfeit)</button>
+          </div>
+
+          <div class="status">
+            <div>Rolls used: <span id="rollCount">0</span>/3</div>
+            <div>Rolls left: <span id="rollLeft">3</span></div>
+            <div>Last roll: <span id="lastRoll">—</span></div>
+            <div id="message" class="message" aria-live="polite"></div>
+          </div>
+        </div>
+      </section>
+
+      <aside class="right">
+        <div class="panel score-panel">
+          <h2>Scorecard</h2>
+
+          <table class="scorecard" id="scorecard">
+            <thead><tr><th>Category</th><th>Score</th></tr></thead>
+            <tbody>
+              <!-- Upper section -->
+              <tr><td>Ones</td><td class="score-cell" data-key="ones">—</td></tr>
+              <tr><td>Twos</td><td class="score-cell" data-key="twos">—</td></tr>
+              <tr><td>Threes</td><td class="score-cell" data-key="threes">—</td></tr>
+              <tr><td>Fours</td><td class="score-cell" data-key="fours">—</td></tr>
+              <tr><td>Fives</td><td class="score-cell" data-key="fives">—</td></tr>
+              <tr><td>Sixes</td><td class="score-cell" data-key="sixes">—</td></tr>
+
+              <tr class="divider"><td colspan="2"></td></tr>
+
+              <!-- Lower section -->
+              <tr><td>One Pair</td><td class="score-cell" data-key="onePair">—</td></tr>
+              <tr><td>Two Pairs</td><td class="score-cell" data-key="twoPairs">—</td></tr>
+              <tr><td>Three of a Kind</td><td class="score-cell" data-key="threeKind">—</td></tr>
+              <tr><td>Four of a Kind</td><td class="score-cell" data-key="fourKind">—</td></tr>
+              <tr><td>Small Straight (1-5)</td><td class="score-cell" data-key="smallStraight">—</td></tr>
+              <tr><td>Large Straight (2-6)</td><td class="score-cell" data-key="largeStraight">—</td></tr>
+              <tr><td>Full House</td><td class="score-cell" data-key="fullHouse">—</td></tr>
+              <tr><td>Chance</td><td class="score-cell" data-key="chance">—</td></tr>
+              <tr><td>Yatzy</td><td class="score-cell" data-key="yatzy">—</td></tr>
+            </tbody>
+            <tfoot>
+              <tr><td><strong>Upper bonus</strong></td><td id="upperBonus">0</td></tr>
+              <tr><td><strong>Total</strong></td><td id="totalScore">0</td></tr>
+            </tfoot>
+          </table>
+        </div>
+      </aside>
+    </main>
+  </div>
+  
+
+  <!-- main module entry (loads other modules) -->
+  <script type="module" src="./modules/YatzyGame.js"></script>
+</body>
+</html>
