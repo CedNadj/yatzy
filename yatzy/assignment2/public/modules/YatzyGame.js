@@ -48,6 +48,8 @@ class YatzyGame {
     if (this.rollCount >= this.maxRolls) {
       this.showMessage('No rolls left. Choose a category to score.');
       return;
+    } else {
+      this.showMessage('');
     }
     // short animation: quick visual cycle
     this.animateRolling().then(() => {

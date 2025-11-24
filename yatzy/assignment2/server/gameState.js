@@ -271,20 +271,34 @@ function updateTurnDisplay() {
  * Updates scorecard display
  */
 function updateScorecard() {
-    // Update individual scores
-    Object.keys(gameState.scores).forEach(category => {
-        const scoreElement = document.querySelector(`[data-category="${category}"] .score-value`);
-        if (scoreElement) {
-            const score = gameState.scores[category];
-            scoreElement.textContent = score !== null ? score : '-';
+    const scoreCells = document.querySelectorAll('.score-cell');
+    
+    scoreCells.forEach(cell => {
+        const category = cell.dataset.category;
+        const isUsed = gameState.scores[category] !== undefined && gameState.scores[category] !== null;
+        
+        if (isUsed) {
+            // Category already used - show final score
+            cell.textContent = gameState.scores[category];
+            cell.classList.add('used');
+            cell.classList.remove('clickable');
+            cell.style.cursor = 'default';
+            cell.onclick = null;
+        } else {
+            // Category available for scoring
+            const potentialScore = calculatePotentialScore(category, gameState.dice);
+            cell.textContent = potentialScore > 0 ? potentialScore : '—';
             
-            const row = scoreElement.closest('.score-row');
-            if (score !== null) {
-                row.classList.add('used');
-                row.classList.remove('clickable');
+            // Only make clickable if we've rolled at least once
+            if (gameState.rollsLeft < 3) {
+                cell.classList.add('clickable');
+                cell.classList.remove('used');
+                cell.style.cursor = 'pointer';
+                cell.onclick = () => scoreCategory(category);
             } else {
-                row.classList.remove('used');
-                row.classList.add('clickable');
+                cell.classList.remove('clickable', 'used');
+                cell.style.cursor = 'default';
+                cell.onclick = null;
             }
         }
     });
