@@ -40,3 +40,7 @@ Upper section (Ones -> Sixes) are scored as count x face vaue. A 63+ bonus (if i
 - `Dice.js` - knows how to roll dice and which dice are held
 - `YatzyEngine.js` - calculates scores for a given category and dice values
 - `YatzyGame.js` - connects the two to the page: controlling turns, animation, and the UI.
+- `Main.js` -
+- `Scoring.js` -
+- `Server.js` -
+- `gameEngine.js` -
