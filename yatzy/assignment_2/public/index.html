@@ -1,0 +1,831 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatzy — Complete Game</title>
+    <link rel="stylesheet" href="style.css"/>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>Yatzy — Complete Game</h1>
+            <p class="lead">Roll up to 3 times, hold dice, then choose a category to score. Try to get the highest total!</p>
+        </header>
+
+        <main>
+            <section class="left">
+                <div class="panel dice-panel">
+                    <div class="dice-row" id="diceRow" aria-live="polite"></div>
+                    <p class="dice-instruction">Click dice to hold/roll them</p>
+                    
+                    <div class="dice-analysis" id="diceAnalysis">
+                        <h3>Dice Analysis:</h3>
+                        <ul id="analysisList">
+                            <!-- Analysis will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="panel controls">
+                    <div class="buttons">
+                        <button id="rollBtn" class="btn primary">Roll</button>
+                        <button id="resetBtn" class="btn danger">Forfeit Turn</button>
+                    </div>
+
+                    <div class="status">
+                        <div>Rolls used: <span id="rollCount">0</span>/3</div>
+                        <div>Rolls left: <span id="rollLeft">3</span></div>
+                        <div>Last roll: <span id="lastRoll">—</span></div>
+                        <div id="message" class="message" aria-live="polite"></div>
+                    </div>
+
+                    <div id="forfeitConfirm" class="forfeit-confirm">
+                        <h3>End Current Game?</h3>
+                        <p>This will reset all scores and start a new game.</p>
+                        <div class="forfeit-confirm-buttons">
+                            <button id="confirmForfeitBtn" class="btn danger">Yes, New Game</button>
+                            <button id="cancelForfeitBtn" class="btn secondary">Cancel</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="right">
+                <div class="panel score-panel">
+                    <h2>Scorecard</h2>
+
+                    <div class="scorecard" id="scorecard">
+                        <!-- Upper section -->
+                        <div class="score-cell" data-category="ones">
+                            <span class="score-name">Ones</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="twos">
+                            <span class="score-name">Twos</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="threes">
+                            <span class="score-name">Threes</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fours">
+                            <span class="score-name">Fours</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fives">
+                            <span class="score-name">Fives</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="sixes">
+                            <span class="score-name">Sixes</span>
+                            <span class="score-value">—</span>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Lower section -->
+                        <div class="score-cell" data-category="onePair">
+                            <span class="score-name">One Pair</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="twoPairs">
+                            <span class="score-name">Two Pairs</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="threeKind">
+                            <span class="score-name">Three of a Kind</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fourKind">
+                            <span class="score-name">Four of a Kind</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="smallStraight">
+                            <span class="score-name">Small Straight (1-5)</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="largeStraight">
+                            <span class="score-name">Large Straight (2-6)</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fullHouse">
+                            <span class="score-name">Full House</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="chance">
+                            <span class="score-name">Chance</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="yatzy">
+                            <span class="score-name">Yatzy</span>
+                            <span class="score-value">—</span>
+                        </div>
+
+                        <!-- Totals -->
+                        <div class="score-cell total-row">
+                            <span class="score-name">Upper Bonus</span>
+                            <span class="score-value" id="upperBonus">0</span>
+                        </div>
+                        <div class="score-cell total-row">
+                            <span class="score-name">Total</span>
+                            <span class="score-value" id="totalScore">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gameOver" class="game-over" style="display: none;">
+                    <h2>Game Over!</h2>
+                    <p>Your final score: <span id="finalScore">0</span></p>
+                    <button id="newGameBtn" class="btn primary">New Game</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script>
+        // =============================================
+        // scoring.js - Handles all scoring calculations
+        // =============================================
+        class Scoring {
+            constructor() {
+                this.categories = {
+                    ones: { name: 'Ones', section: 'upper' },
+                    twos: { name: 'Twos', section: 'upper' },
+                    threes: { name: 'Threes', section: 'upper' },
+                    fours: { name: 'Fours', section: 'upper' },
+                    fives: { name: 'Fives', section: 'upper' },
+                    sixes: { name: 'Sixes', section: 'upper' },
+                    onePair: { name: 'One Pair', section: 'lower' },
+                    twoPairs: { name: 'Two Pairs', section: 'lower' },
+                    threeKind: { name: 'Three of a Kind', section: 'lower' },
+                    fourKind: { name: 'Four of a Kind', section: 'lower' },
+                    smallStraight: { name: 'Small Straight', section: 'lower' },
+                    largeStraight: { name: 'Large Straight', section: 'lower' },
+                    fullHouse: { name: 'Full House', section: 'lower' },
+                    chance: { name: 'Chance', section: 'lower' },
+                    yatzy: { name: 'Yatzy', section: 'lower' }
+                };
+            }
+
+            calculateScore(category, dice) {
+                if (!this.categories[category]) {
+                    throw new Error(`Invalid category: ${category}`);
+                }
+
+                const counts = this.getDiceCounts(dice);
+
+                switch(category) {
+                    case 'ones': return counts[0] * 1;
+                    case 'twos': return counts[1] * 2;
+                    case 'threes': return counts[2] * 3;
+                    case 'fours': return counts[3] * 4;
+                    case 'fives': return counts[4] * 5;
+                    case 'sixes': return counts[5] * 6;
+                    case 'onePair': return this.calculateOnePair(counts);
+                    case 'twoPairs': return this.calculateTwoPairs(counts);
+                    case 'threeKind': return this.calculateThreeOfAKind(counts);
+                    case 'fourKind': return this.calculateFourOfAKind(counts);
+                    case 'smallStraight': return this.calculateSmallStraight(counts);
+                    case 'largeStraight': return this.calculateLargeStraight(counts);
+                    case 'fullHouse': return this.calculateFullHouse(counts, dice);
+                    case 'chance': return this.calculateChance(dice);
+                    case 'yatzy': return this.calculateYatzy(counts);
+                    default: return 0;
+                }
+            }
+
+            getDiceCounts(dice) {
+                const counts = [0, 0, 0, 0, 0, 0];
+                dice.forEach(die => {
+                    if (die >= 1 && die <= 6) {
+                        counts[die - 1]++;
+                    }
+                });
+                return counts;
+            }
+
+            calculateOnePair(counts) {
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 2) return (i + 1) * 2;
+                }
+                return 0;
+            }
+
+            calculateTwoPairs(counts) {
+                let pairs = [];
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 2) pairs.push(i + 1);
+                }
+                return pairs.length >= 2 ? (pairs[0] * 2) + (pairs[1] * 2) : 0;
+            }
+
+            calculateThreeOfAKind(counts) {
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 3) return (i + 1) * 3;
+                }
+                return 0;
+            }
+
+            calculateFourOfAKind(counts) {
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 4) return (i + 1) * 4;
+                }
+                return 0;
+            }
+
+            calculateSmallStraight(counts) {
+                return (counts[0] && counts[1] && counts[2] && counts[3] && counts[4]) ? 15 : 0;
+            }
+
+            calculateLargeStraight(counts) {
+                return (counts[1] && counts[2] && counts[3] && counts[4] && counts[5]) ? 20 : 0;
+            }
+
+            calculateFullHouse(counts, dice) {
+                let hasThree = false, hasTwo = false;
+                for (let i = 0; i < 6; i++) {
+                    if (counts[i] === 3) hasThree = true;
+                    if (counts[i] === 2) hasTwo = true;
+                }
+                return (hasThree && hasTwo) ? dice.reduce((a, b) => a + b, 0) : 0;
+            }
+
+            calculateChance(dice) {
+                return dice.reduce((a, b) => a + b, 0);
+            }
+
+            calculateYatzy(counts) {
+                return counts.some(count => count === 5) ? 50 : 0;
+            }
+
+            getAllPossibleScores(dice) {
+                const possibleScores = {};
+                Object.keys(this.categories).forEach(category => {
+                    possibleScores[category] = this.calculateScore(category, dice);
+                });
+                return possibleScores;
+            }
+            
+            analyzeDice(dice) {
+                const counts = this.getDiceCounts(dice);
+                const analysis = [];
+                
+                // Check for Yatzy
+                if (counts.some(count => count === 5)) {
+                    analysis.push("Yatzy! All five dice are the same (50 points)");
+                }
+                
+                // Check for straights
+                if (counts[0] && counts[1] && counts[2] && counts[3] && counts[4]) {
+                    analysis.push("Small Straight (1-2-3-4-5) - 15 points");
+                }
+                if (counts[1] && counts[2] && counts[3] && counts[4] && counts[5]) {
+                    analysis.push("Large Straight (2-3-4-5-6) - 20 points");
+                }
+                
+                // Check for four of a kind
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 4) {
+                        analysis.push(`Four ${i+1}'s - ${(i+1)*4} points`);
+                        break;
+                    }
+                }
+                
+                // Check for three of a kind
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 3) {
+                        analysis.push(`Three ${i+1}'s - ${(i+1)*3} points`);
+                        break;
+                    }
+                }
+                
+                // Check for pairs
+                const pairs = [];
+                for (let i = 5; i >= 0; i--) {
+                    if (counts[i] >= 2) pairs.push(i+1);
+                }
+                if (pairs.length >= 2) {
+                    analysis.push(`Two Pairs: ${pairs[0]}'s and ${pairs[1]}'s - ${(pairs[0]*2) + (pairs[1]*2)} points`);
+                } else if (pairs.length === 1) {
+                    analysis.push(`One Pair of ${pairs[0]}'s - ${pairs[0]*2} points`);
+                }
+                
+                // Check for full house
+                let hasThree = false, hasTwo = false;
+                for (let i = 0; i < 6; i++) {
+                    if (counts[i] === 3) hasThree = true;
+                    if (counts[i] === 2) hasTwo = true;
+                }
+                if (hasThree && hasTwo) {
+                    analysis.push(`Full House - ${dice.reduce((a, b) => a + b, 0)} points`);
+                }
+                
+                // Check upper section opportunities
+                for (let i = 0; i < 6; i++) {
+                    if (counts[i] > 0) {
+                        analysis.push(`${counts[i]} ${i+1}'s - ${counts[i] * (i+1)} points in ${i+1}'s category`);
+                    }
+                }
+                
+                // Always include chance
+                analysis.push(`Chance - ${dice.reduce((a, b) => a + b, 0)} points`);
+                
+                return analysis;
+            }
+        }
+
+        // =============================================
+        // utils.js - Utility functions
+        // =============================================
+        const Utils = {
+            getAvailableScores(scores, dice, scoringEngine) {
+                const available = {};
+                Object.keys(scores).forEach(category => {
+                    if (scores[category] === null) {
+                        available[category] = scoringEngine.calculateScore(category, dice);
+                    }
+                });
+                return available;
+            },
+
+            calculateTotals(scores) {
+                const upperSection = ['ones', 'twos', 'threes', 'fours', 'fives', 'sixes'];
+                const upperTotal = upperSection.reduce((total, category) => total + (scores[category] || 0), 0);
+                const bonus = upperTotal >= 63 ? 50 : 0;
+                const lowerTotal = Object.keys(scores)
+                    .filter(category => !upperSection.includes(category))
+                    .reduce((total, category) => total + (scores[category] || 0), 0);
+                const grandTotal = upperTotal + bonus + lowerTotal;
+                
+                return { upperTotal, bonus, lowerTotal, grandTotal };
+            },
+
+            validateDice(dice) {
+                if (!Array.isArray(dice) || dice.length !== 5) {
+                    throw new Error('Dice must be an array of 5 values');
+                }
+                dice.forEach((die, index) => {
+                    if (!Number.isInteger(die) || die < 1 || die > 6) {
+                        throw new Error(`Die ${index + 1} has invalid value: ${die}`);
+                    }
+                });
+                return true;
+            },
+
+            formatCategoryName(category) {
+                const names = {
+                    ones: 'Ones', twos: 'Twos', threes: 'Threes', fours: 'Fours', fives: 'Fives', sixes: 'Sixes',
+                    onePair: 'One Pair', twoPairs: 'Two Pairs', threeKind: 'Three of a Kind', fourKind: 'Four of a Kind',
+                    smallStraight: 'Small Straight', largeStraight: 'Large Straight', fullHouse: 'Full House',
+                    chance: 'Chance', yatzy: 'Yatzy'
+                };
+                return names[category] || category;
+            },
+
+            isGameOver(scores) {
+                return Object.values(scores).every(score => score !== null);
+            }
+        };
+
+        // =============================================
+        // YatzyEngine.js - Main game engine
+        // =============================================
+        class YatzyEngine {
+            constructor() {
+                this.scoring = new Scoring();
+                this.resetGame();
+            }
+
+            resetGame() {
+                this.dice = [1, 1, 1, 1, 1];
+                this.held = [false, false, false, false, false];
+                this.rolls = 0;
+                this.scores = {
+                    ones: null, twos: null, threes: null, fours: null, fives: null, sixes: null,
+                    onePair: null, twoPairs: null, threeKind: null, fourKind: null,
+                    smallStraight: null, largeStraight: null, fullHouse: null, chance: null, yatzy: null
+                };
+                this.gameOver = false;
+            }
+
+            rollDice() {
+                if (this.gameOver) throw new Error('Game is over. Start a new game.');
+                if (this.rolls >= 3) throw new Error('No rolls left. Choose a category to score.');
+
+                this.dice.forEach((_, index) => {
+                    if (!this.held[index]) {
+                        this.dice[index] = Math.floor(Math.random() * 6) + 1;
+                    }
+                });
+
+                this.rolls++;
+                Utils.validateDice(this.dice);
+
+                return {
+                    dice: [...this.dice],
+                    rolls: this.rolls,
+                    rollsLeft: 3 - this.rolls,
+                    canRoll: this.rolls < 3
+                };
+            }
+
+            toggleHold(dieIndex) {
+                if (this.gameOver) throw new Error('Game is over.');
+                if (dieIndex < 0 || dieIndex > 4) throw new Error('Invalid die index.');
+                if (this.rolls === 0) throw new Error('Roll the dice first before holding.');
+
+                this.held[dieIndex] = !this.held[dieIndex];
+                return { held: [...this.held], dieIndex };
+            }
+
+            scoreCategory(category) {
+                if (this.gameOver) throw new Error('Game is over.');
+                if (this.rolls === 0) throw new Error('Roll the dice first before scoring.');
+                if (this.scores[category] !== null) throw new Error(`Category "${category}" already scored.`);
+
+                const score = this.scoring.calculateScore(category, this.dice);
+                this.scores[category] = score;
+
+                const totals = Utils.calculateTotals(this.scores);
+                this.gameOver = Utils.isGameOver(this.scores);
+                this.rolls = 0;
+                this.held = [false, false, false, false, false];
+
+                return { category, score, totals, gameOver: this.gameOver };
+            }
+
+            getAvailableScoringOptions() {
+                return Utils.getAvailableScores(this.scores, this.dice, this.scoring);
+            }
+            
+            analyzeDice() {
+                return this.scoring.analyzeDice(this.dice);
+            }
+
+            getGameState() {
+                const totals = Utils.calculateTotals(this.scores);
+                const availableScores = this.getAvailableScoringOptions();
+                
+                return {
+                    dice: [...this.dice],
+                    held: [...this.held],
+                    rolls: this.rolls,
+                    rollsLeft: 3 - this.rolls,
+                    scores: { ...this.scores },
+                    totals,
+                    availableScores,
+                    gameOver: this.gameOver
+                };
+            }
+
+            getDice() { return [...this.dice]; }
+            getHeldStatus() { return [...this.held]; }
+            getScores() { return { ...this.scores }; }
+            getRollCount() { return this.rolls; }
+        }
+
+        // =============================================
+        // UIManager.js - Handles DOM interactions
+        // =============================================
+        class UIManager {
+            constructor(engine) {
+                this.engine = engine;
+                this.diceRow = document.getElementById('diceRow');
+                this.rollBtn = document.getElementById('rollBtn');
+                this.resetBtn = document.getElementById('resetBtn');
+                this.newGameBtn = document.getElementById('newGameBtn');
+                this.rollCount = document.getElementById('rollCount');
+                this.rollLeft = document.getElementById('rollLeft');
+                this.lastRoll = document.getElementById('lastRoll');
+                this.message = document.getElementById('message');
+                this.upperBonus = document.getElementById('upperBonus');
+                this.totalScore = document.getElementById('totalScore');
+                this.gameOver = document.getElementById('gameOver');
+                this.finalScore = document.getElementById('finalScore');
+                this.diceAnalysis = document.getElementById('diceAnalysis');
+                this.analysisList = document.getElementById('analysisList');
+                this.forfeitConfirm = document.getElementById('forfeitConfirm');
+                this.confirmForfeitBtn = document.getElementById('confirmForfeitBtn');
+                this.cancelForfeitBtn = document.getElementById('cancelForfeitBtn');
+                
+                this.createDice();
+            }
+
+            createDice() {
+                this.diceRow.innerHTML = '';
+                for (let i = 0; i < 5; i++) {
+                    const die = document.createElement('div');
+                    die.className = 'die';
+                    die.dataset.index = i;
+                    
+                    const pips = ['top-left', 'top-right', 'middle-left', 'middle-right', 'bottom-left', 'bottom-right', 'center'];
+                    pips.forEach(pipClass => {
+                        const pip = document.createElement('div');
+                        pip.className = `pip ${pipClass}`;
+                        die.appendChild(pip);
+                    });
+                    
+                    this.diceRow.appendChild(die);
+                }
+                this.updateDiceDisplay();
+            }
+
+            updateDiceDisplay() {
+                const dice = this.engine.getDice();
+                const held = this.engine.getHeldStatus();
+                const dieElements = document.querySelectorAll('.die');
+
+                dice.forEach((value, index) => {
+                    const die = dieElements[index];
+                    die.querySelectorAll('.pip').forEach(pip => pip.classList.remove('active'));
+                    this.activatePips(die, value);
+                    die.classList.toggle('held', held[index]);
+                });
+            }
+
+            activatePips(die, value) {
+                const pipMap = {
+                    1: ['center'],
+                    2: ['top-left', 'bottom-right'],
+                    3: ['top-left', 'center', 'bottom-right'],
+                    4: ['top-left', 'top-right', 'bottom-left', 'bottom-right'],
+                    5: ['top-left', 'top-right', 'center', 'bottom-left', 'bottom-right'],
+                    6: ['top-left', 'top-right', 'middle-left', 'middle-right', 'bottom-left', 'bottom-right']
+                };
+
+                if (pipMap[value]) {
+                    pipMap[value].forEach(pipClass => {
+                        die.querySelector(`.${pipClass}`).classList.add('active');
+                    });
+                }
+            }
+
+            updateRollInfo(rolls, rollsLeft) {
+                this.rollCount.textContent = rolls;
+                this.rollLeft.textContent = rollsLeft;
+            }
+
+            updateScoreDisplay(scores) {
+                const scoreCells = document.querySelectorAll('.score-cell');
+                
+                scoreCells.forEach(cell => {
+                    const category = cell.dataset.category;
+                    const score = scores[category];
+                    
+                    if (score !== null) {
+                        // Show score for already used categories
+                        cell.querySelector('.score-value').textContent = score;
+                        cell.classList.add('used');
+                        cell.classList.remove('available');
+                    } else {
+                        // For unused categories, don't show potential score
+                        cell.querySelector('.score-value').textContent = '—';
+                        cell.classList.remove('used', 'available');
+                    }
+                });
+            }
+
+            updateTotals(totals) {
+                this.upperBonus.textContent = totals.bonus;
+                this.totalScore.textContent = totals.grandTotal;
+            }
+
+            updateButtonStates(rolls) {
+                this.rollBtn.disabled = rolls >= 3;
+            }
+
+            updateLastRollDisplay(dice) {
+                if (dice && dice.length === 5) {
+                    this.lastRoll.textContent = dice.join(', ');
+                }
+            }
+
+            showDiceAnalysis() {
+                const analysis = this.engine.analyzeDice();
+                this.analysisList.innerHTML = '';
+                
+                analysis.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    this.analysisList.appendChild(li);
+                });
+                
+                this.diceAnalysis.style.display = 'block';
+            }
+            
+            hideDiceAnalysis() {
+                this.diceAnalysis.style.display = 'none';
+            }
+
+            showGameOver(finalScore) {
+                this.finalScore.textContent = finalScore;
+                this.gameOver.style.display = 'block';
+            }
+
+            hideGameOver() {
+                this.gameOver.style.display = 'none';
+            }
+
+            showForfeitConfirm() {
+                this.forfeitConfirm.style.display = 'block';
+            }
+
+            hideForfeitConfirm() {
+                this.forfeitConfirm.style.display = 'none';
+            }
+
+            showMessage(text, type = 'info') {
+                this.message.textContent = text;
+                this.message.className = `message ${type}`;
+                setTimeout(() => {
+                    this.message.textContent = '';
+                    this.message.className = 'message';
+                }, 3000);
+            }
+
+            setupEventListeners(onRoll, onForfeit, onScoreCategory, onNewGame, onDiceHold, onConfirmForfeit, onCancelForfeit) {
+                this.rollBtn.addEventListener('click', onRoll);
+                this.resetBtn.addEventListener('click', onForfeit);
+                this.newGameBtn.addEventListener('click', onNewGame);
+                this.confirmForfeitBtn.addEventListener('click', onConfirmForfeit);
+                this.cancelForfeitBtn.addEventListener('click', onCancelForfeit);
+                
+                // Score category clicks
+                document.querySelectorAll('.score-cell').forEach(cell => {
+                    cell.addEventListener('click', () => {
+                        // Only allow scoring if dice have been rolled
+                        if (this.engine.getRollCount() > 0) {
+                            onScoreCategory(cell.dataset.category);
+                        }
+                    });
+                });
+                
+                // Dice hold clicks
+                this.diceRow.addEventListener('click', (e) => {
+                    const die = e.target.closest('.die');
+                    if (die) {
+                        const index = parseInt(die.dataset.index);
+                        onDiceHold(index);
+                    }
+                });
+            }
+
+            // Add rolling animation to dice
+            addRollingAnimation() {
+                const dieElements = document.querySelectorAll('.die');
+                const held = this.engine.getHeldStatus();
+                
+                dieElements.forEach((die, index) => {
+                    if (!held[index]) {
+                        die.classList.add('rolling');
+                    }
+                });
+            }
+
+            // Remove rolling animation from dice
+            removeRollingAnimation() {
+                const dieElements = document.querySelectorAll('.die');
+                dieElements.forEach(die => die.classList.remove('rolling'));
+            }
+        }
+
+        // =============================================
+        // YatzyGame.js - Main game controller
+        // =============================================
+        class YatzyGame {
+            constructor() {
+                this.engine = new YatzyEngine();
+                this.ui = new UIManager(this.engine);
+                this.init();
+            }
+
+            init() {
+                console.log('Yatzy Game initialized!');
+                this.ui.setupEventListeners(
+                    () => this.handleRoll(),
+                    () => this.showForfeitConfirm(),
+                    (category) => this.handleScoreCategory(category),
+                    () => this.handleNewGame(),
+                    (index) => this.handleDiceHold(index),
+                    () => this.confirmForfeit(),
+                    () => this.cancelForfeit()
+                );
+                this.updateUI();
+            }
+
+            async handleRoll() {
+                try {
+                    // Add rolling animation
+                    this.ui.addRollingAnimation();
+                    
+                    // Wait for animation
+                    await new Promise(resolve => setTimeout(resolve, 600));
+                    
+                    const result = this.engine.rollDice();
+                    this.updateUI();
+                    this.ui.updateLastRollDisplay(result.dice);
+                    
+                    // Show dice analysis after rolling
+                    this.ui.showDiceAnalysis();
+                    
+                    if (result.rolls === 1) {
+                        this.ui.showMessage('Select dice to hold, then roll again', 'info');
+                    } else if (result.rolls >= 3) {
+                        this.ui.showMessage('Choose a category to score based on your dice', 'info');
+                    }
+                } catch (error) {
+                    this.ui.showMessage(error.message, 'error');
+                } finally {
+                    // Remove animation
+                    this.ui.removeRollingAnimation();
+                }
+            }
+
+            showForfeitConfirm() {
+                this.ui.showForfeitConfirm();
+            }
+
+            confirmForfeit() {
+                this.handleNewGame();
+                this.ui.hideForfeitConfirm();
+                this.ui.showMessage('New game started! All previous scores have been reset.', 'success');
+            }
+
+            cancelForfeit() {
+                this.ui.hideForfeitConfirm();
+                this.ui.showMessage('Forfeit cancelled. Continue playing!', 'info');
+            }
+
+            handleScoreCategory(category) {
+                try {
+                    const result = this.engine.scoreCategory(category);
+                    this.updateUI();
+                    this.ui.hideDiceAnalysis();
+                    this.ui.showMessage(`Scored ${result.score} points in ${this.formatCategoryName(category)}`, 'success');
+                    
+                    if (result.gameOver) {
+                        this.ui.showGameOver(result.totals.grandTotal);
+                        this.ui.showMessage(`Game completed! Final score: ${result.totals.grandTotal}`, 'success');
+                    }
+                } catch (error) {
+                    this.ui.showMessage(error.message, 'error');
+                }
+            }
+
+            handleDiceHold(index) {
+                try {
+                    this.engine.toggleHold(index);
+                    this.ui.updateDiceDisplay();
+                } catch (error) {
+                    this.ui.showMessage(error.message, 'error');
+                }
+            }
+
+            handleNewGame() {
+                this.engine.resetGame();
+                this.updateUI();
+                this.ui.hideDiceAnalysis();
+                this.ui.hideGameOver();
+                this.ui.hideForfeitConfirm();
+            }
+
+            updateUI() {
+                const state = this.engine.getGameState();
+                this.ui.updateRollInfo(state.rolls, state.rollsLeft);
+                this.ui.updateDiceDisplay();
+                this.ui.updateScoreDisplay(state.scores);
+                this.ui.updateTotals(state.totals);
+                this.ui.updateButtonStates(state.rolls);
+            }
+
+            formatCategoryName(category) {
+                const names = {
+                    ones: 'Ones', twos: 'Twos', threes: 'Threes', fours: 'Fours', fives: 'Fives', sixes: 'Sixes',
+                    onePair: 'One Pair', twoPairs: 'Two Pairs', threeKind: 'Three of a Kind', fourKind: 'Four of a Kind',
+                    smallStraight: 'Small Straight', largeStraight: 'Large Straight', fullHouse: 'Full House',
+                    chance: 'Chance', yatzy: 'Yatzy'
+                };
+                return names[category] || category;
+            }
+        }
+
+        // =============================================
+        // main.js - Initialize the game
+        // =============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            const game = new YatzyGame();
+            
+            // Make game globally available for debugging if needed
+            window.yatzyGame = game;
+            
+            console.log('🎲 Yatzy Game loaded successfully!');
+            console.log('Game controls:');
+            console.log('- Click "Roll" to roll the dice');
+            console.log('- Click dice to hold them between rolls');
+            console.log('- Click score categories to score your dice');
+            console.log('- Use "Forfeit Turn" to start a new game');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Yatzy — Complete Game</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>Yatzy — Complete Game</h1>
+            <p class="lead">Roll up to 3 times, hold dice, then choose a category to score. Try to get the highest total!</p>
+        </header>
+
+        <main>
+            <section class="left">
+                <div class="panel dice-panel">
+                    <div class="dice-row" id="diceRow" aria-live="polite"></div>
+                    <p class="dice-instruction">Click dice to hold/roll them</p>
+                    
+                    <div class="dice-analysis" id="diceAnalysis">
+                        <h3>Dice Analysis:</h3>
+                        <ul id="analysisList">
+                            <!-- Analysis will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="panel controls">
+                    <div class="buttons">
+                        <button id="rollBtn" class="btn primary">Roll</button>
+                        <button id="resetBtn" class="btn secondary">End Turn (forfeit)</button>
+                    </div>
+
+                    <div class="status">
+                        <div>Rolls used: <span id="rollCount">0</span>/3</div>
+                        <div>Rolls left: <span id="rollLeft">3</span></div>
+                        <div>Last roll: <span id="lastRoll">—</span></div>
+                        <div id="message" class="message" aria-live="polite"></div>
+                    </div>
+                </div>
+            </section>
+
+            <aside class="right">
+                <div class="panel score-panel">
+                    <h2>Scorecard</h2>
+
+                    <div class="scorecard" id="scorecard">
+                        <!-- Upper section -->
+                        <div class="score-cell" data-category="ones">
+                            <span class="score-name">Ones</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="twos">
+                            <span class="score-name">Twos</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="threes">
+                            <span class="score-name">Threes</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fours">
+                            <span class="score-name">Fours</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fives">
+                            <span class="score-name">Fives</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="sixes">
+                            <span class="score-name">Sixes</span>
+                            <span class="score-value">—</span>
+                        </div>
+
+                        <div class="divider"></div>
+
+                        <!-- Lower section -->
+                        <div class="score-cell" data-category="onePair">
+                            <span class="score-name">One Pair</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="twoPairs">
+                            <span class="score-name">Two Pairs</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="threeKind">
+                            <span class="score-name">Three of a Kind</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fourKind">
+                            <span class="score-name">Four of a Kind</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="smallStraight">
+                            <span class="score-name">Small Straight (1-5)</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="largeStraight">
+                            <span class="score-name">Large Straight (2-6)</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="fullHouse">
+                            <span class="score-name">Full House</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="chance">
+                            <span class="score-name">Chance</span>
+                            <span class="score-value">—</span>
+                        </div>
+                        <div class="score-cell" data-category="yatzy">
+                            <span class="score-name">Yatzy</span>
+                            <span class="score-value">—</span>
+                        </div>
+
+                        <!-- Totals -->
+                        <div class="score-cell total-row">
+                            <span class="score-name">Upper Bonus</span>
+                            <span class="score-value" id="upperBonus">0</span>
+                        </div>
+                        <div class="score-cell total-row">
+                            <span class="score-name">Total</span>
+                            <span class="score-value" id="totalScore">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="gameOver" class="game-over" style="display: none;">
+                    <h2>Game Over!</h2>
+                    <p>Your final score: <span id="finalScore">0</span></p>
+                    <button id="newGameBtn" class="btn primary">New Game</button>
+                </div>
+            </aside>
+        </main>
+    </div>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

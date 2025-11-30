@@ -9,7 +9,7 @@ import {
     getState, 
     toggleHoldDie,
     resetGame 
-} from "./server/YatzyGame.js";
+} from "./Yatz.js";
 
 // Node path setup
 const filename = fileURLToPath(import.meta.url);

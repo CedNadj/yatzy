@@ -56,9 +56,9 @@ function setupEventListeners() {
 
     // Score category click handlers
     document.addEventListener('click', (e) => {
-        const scoreRow = e.target.closest('.score-row.clickable');
-        if (scoreRow) {
-            const category = scoreRow.dataset.category;
+        const scoreRow = e.target.closest('.score-cell.clickable');
+        if (scoreCell) {
+            const category = scorecell.dataset.category;
             scoreCategory(category);
         }
     });
